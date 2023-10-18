@@ -35,6 +35,10 @@ public Gun gun;
     // Update is called once per frame
     void Update()
     {
+        if (player == null)
+        {
+            return;
+        }
         currentUpgradeTime += Time.deltaTime;
         currentSpawnTime += Time.deltaTime;
         if (currentUpgradeTime > actualUpgradeTime)

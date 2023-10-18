@@ -15,6 +15,8 @@ public class PlayerController : MonoBehaviour
     private bool isHit = false;
     private float timeSinceHit = 0;
     private int hitNumber = -1;
+    public Rigidbody marineBody;
+    private bool isDead = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -24,9 +26,19 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         Vector3 moveDirection = new Vector3(Input.GetAxis("Horizontal"),
   0, Input.GetAxis("Vertical"));
         characterController.SimpleMove(moveDirection * moveSpeed);
+        if (isHit)
+        {
+            timeSinceHit += Time.deltaTime;
+            if (timeSinceHit > timeBetweenHits)
+            {
+                isHit = false;
+                timeSinceHit = 0;
+            }
+        }
     }
 
     void FixedUpdate()
@@ -79,12 +91,26 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
-                    // death todo
+                    Die();  
                 }
                 isHit = true; // 4
                 SoundManager.Instance.PlayOneShot(SoundManager.Instance.hurt);
             }
             alien.Die();
         }
+    }
+   public  void Die()
+    {
+        bodyAnimator.SetBool("IsMoving", false);
+        marineBody.transform.parent = null;
+        marineBody.isKinematic = false;
+        marineBody.useGravity = true;
+        marineBody.gameObject.GetComponent<CapsuleCollider>().enabled = true;
+        marineBody.gameObject.GetComponent<Gun>().enabled = false;
+        Destroy(head.gameObject.GetComponent<HingeJoint>());
+        head.transform.parent = null;
+head.useGravity = true;
+        SoundManager.Instance.PlayOneShot(SoundManager.Instance.marineDeath);
+        Destroy(gameObject);
     }
 }
