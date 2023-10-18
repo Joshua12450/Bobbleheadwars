@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    private DeathParticles deathParticles;
     public float moveSpeed = 50.0f;
     public Rigidbody head;
     private CharacterController characterController;
@@ -20,6 +21,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        deathParticles = gameObject.GetComponentInChildren<DeathParticles>();
         characterController = GetComponent<CharacterController>();
     }
 
@@ -111,6 +113,7 @@ public class PlayerController : MonoBehaviour
         head.transform.parent = null;
 head.useGravity = true;
         SoundManager.Instance.PlayOneShot(SoundManager.Instance.marineDeath);
+        deathParticles.Activate();
         Destroy(gameObject);
     }
 }
